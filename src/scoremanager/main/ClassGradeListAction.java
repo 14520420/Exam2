@@ -1,3 +1,4 @@
+//クラス
 package scoremanager.main;
 
 import java.util.List;
@@ -25,3 +26,5 @@ public class ClassGradeListAction extends Action {
         dispatcher.forward(request, response);
     }
 }
+
+

@@ -1,3 +1,4 @@
+
 package bean;
 
 public class ClassGrade {
@@ -37,3 +38,4 @@ public class ClassGrade {
         this.avgPoint = avgPoint;
     }
 }
+
