@@ -5,7 +5,7 @@ public class Test {
 	private String classNum;
 	private School school;
 	private Subject subject;
-
+	
 	private int no;
 	private int point;
 
