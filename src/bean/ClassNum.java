@@ -1,29 +1,40 @@
-// クラス定義：このクラスはデータ構造やロジックの単位として使用されます
 package bean;
 
-public class ClassNum {
-	// class_num：String型のフィールド
-	private String class_num;
-	// school：School型のフィールド
-	private School school;
+import java.io.Serializable;
 
-	// getClass_numメソッド：値の取得を行う
+public class ClassNum implements Serializable {
+
+	private String class_num;
+	private String old_class_num;
+	private School school;
+	private int c_count;
+
 	public String getClass_num() {
 		return class_num;
 	}
-
-	// setClass_numメソッド：値の設定を行う
 	public void setClass_num(String class_num) {
 		this.class_num = class_num;
 	}
 
-	// getSchoolメソッド：値の取得を行う
+	public String getOld_class_num() {
+		return old_class_num;
+	}
+	public void setOld_class_num(String old_class_num) {
+		this.old_class_num = old_class_num;
+	}
+
 	public School getSchool() {
 		return school;
 	}
-
-	// setSchoolメソッド：値の設定を行う
 	public void setSchool(School school) {
 		this.school = school;
 	}
+
+	public int getC_count() {
+		return c_count;
+	}
+	public void setC_count(int c_count) {
+		this.c_count = c_count;
+	}
+
 }
