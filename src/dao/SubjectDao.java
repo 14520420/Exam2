@@ -127,6 +127,7 @@ public class SubjectDao extends Dao {
             if (connection != null) try { connection.close(); } catch (SQLException e) { throw e; }
         }
 
+
         return count > 0;
     }
 }
