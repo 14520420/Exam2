@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import bean.School;
 import bean.Student;
@@ -174,4 +175,55 @@ public class TestDao extends Dao {
 
         return result;
     }
+    public List<Test> selectByConditions(Map<String,String> cond, School school) throws Exception {
+        List<Test> list = new ArrayList<>();
+        Connection con = getConnection();
+        StringBuilder sql = new StringBuilder(
+            "SELECT t.*, s.name student_name, s.ent_year, t.class_num " +
+            "FROM test t JOIN student s ON t.student_no=s.no AND t.school_cd=s.school_cd " +
+            "WHERE t.school_cd=?"
+        );
+        List<Object> prm = new ArrayList<>();
+        prm.add(school.getCd());
+
+        if (cond.containsKey("entYear")){
+            sql.append(" AND s.ent_year=?"); prm.add(Integer.parseInt(cond.get("entYear")));
+        }
+        if (cond.containsKey("classNum")){
+            sql.append(" AND t.class_num=?"); prm.add(cond.get("classNum"));
+        }
+        if (cond.containsKey("subjectCd")){
+            sql.append(" AND t.subject_cd=?"); prm.add(cond.get("subjectCd"));
+        }
+        if (cond.containsKey("no")){
+            sql.append(" AND t.no=?"); prm.add(Integer.parseInt(cond.get("no")));
+        }
+        if (cond.containsKey("studentInfo")){
+            sql.append(" AND (s.no LIKE ? OR s.name LIKE ?)");
+            String kw="%"+cond.get("studentInfo")+"%"; prm.add(kw); prm.add(kw);
+        }
+        sql.append(" ORDER BY s.ent_year,t.class_num,s.no,t.no");
+
+        try(PreparedStatement st = con.prepareStatement(sql.toString())){
+            for(int i=0;i<prm.size();i++) st.setObject(i+1,prm.get(i));
+            try(ResultSet rs = st.executeQuery()){
+                while(rs.next()){
+                    Test t = new Test();
+                    Student stu = new Student();
+                    stu.setNo(rs.getString("student_no"));
+                    stu.setName(rs.getString("student_name"));
+                    t.setStudent(stu);
+                    Subject sbj = new Subject(); sbj.setCd(rs.getString("subject_cd"));
+                    t.setSubject(sbj);
+                    t.setSchool(school);
+                    t.setNo(rs.getInt("no"));
+                    t.setPoint(rs.getInt("point"));
+                    t.setClassNum(rs.getString("class_num"));
+                    list.add(t);
+                }
+            }
+        } finally { con.close(); }
+        return list;
+    }
+
 }

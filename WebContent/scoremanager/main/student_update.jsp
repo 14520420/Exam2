@@ -47,7 +47,7 @@
 			</table>
 
 			<div style="margin-top: 20px;">
-				<input type="submit" value="更新" /> <a href="menu.jsp"
+				<input type="submit" value="更新" /> <a href="StudentList.action"
 					style="margin-left: 20px;">戻る</a>
 			</div>
 		</form>
