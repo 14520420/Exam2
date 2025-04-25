@@ -12,7 +12,12 @@ import bean.School;
 import bean.Student;
 
 public class StudentDao extends Dao{
+
 	String baseSql = "select * from student where school_cd=?";
+	public static List<Student> filter(String schoolCd, String entYear, String classNum) throws Exception {
+	    return new StudentDao().filter(schoolCd, entYear, classNum);
+	}
+
 
 	// 個人データ取得
 	public Student get(String no) throws Exception {
@@ -338,5 +343,7 @@ public class StudentDao extends Dao{
 	        }
 		}
 		return c_list;
-	}
-}
+	}}
+
+
+

@@ -175,6 +175,7 @@ public class TestDao extends Dao {
 
         return result;
     }
+
     public List<Test> selectByConditions(Map<String,String> cond, School school) throws Exception {
         List<Test> list = new ArrayList<>();
         Connection con = getConnection();
@@ -225,5 +226,4 @@ public class TestDao extends Dao {
         } finally { con.close(); }
         return list;
     }
-
 }

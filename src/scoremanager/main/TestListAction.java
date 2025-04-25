@@ -49,7 +49,7 @@ public class TestListAction extends Action {
 
     req.setAttribute("ent_year_set", entYearSet);
     req.setAttribute("class_num_set", classNumSet);
-    req.setAttribute("subjects",     subjects);
+    req.setAttribute("subjects", subjects);
 
     // 4. 検索条件マップ（空なら全件）
     Map<String,String> cond = new HashMap<>();

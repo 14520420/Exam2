@@ -38,7 +38,7 @@
           <div class="col-3">
             <label class="form-label">科目</label>
             <select name="f3" class="form-select">
-              <option value="">--</option>   <!-- ★ 追加済み -->
+              <option value="">--</option>
               <c:forEach var="s" items="${subjects}">
                 <option value="${s.cd}" <c:if test="${conditions['subjectCd']==s.cd}">selected</c:if>>${s.name}</option>
               </c:forEach>
