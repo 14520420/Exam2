@@ -77,8 +77,8 @@ public class TestRegistExecuteAction extends Action {
             boolean success = testDao.save(testList);
 
             if (success) {
-                // 成績管理画面にリダイレクト
-                response.sendRedirect("TestRegist.action");
+                // 登録完了画面にフォワード
+                request.getRequestDispatcher("test_regist_done.jsp").forward(request, response);
             } else {
                 throw new Exception("成績の登録に失敗しました");
             }
