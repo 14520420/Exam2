@@ -28,4 +28,4 @@ public class Dao {
         // データベースへのコネクションを返却
         return ds.getConnection();
     }
-}
+} 

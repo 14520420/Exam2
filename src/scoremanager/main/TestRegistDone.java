@@ -122,4 +122,4 @@ public class TestRegistDone extends Action {
         // JSPへフォワード
         request.getRequestDispatcher("test_regist_done.jsp").forward(request, response);
     }
-}
+} 

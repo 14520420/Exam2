@@ -73,4 +73,4 @@ public class ClassCreateExecuteAction extends Action {
             req.getRequestDispatcher("class_create.jsp").forward(req, res);
         }
     }
-}
+} 

@@ -95,4 +95,4 @@ public class TestRegistAction extends Action {
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
-}
+} 

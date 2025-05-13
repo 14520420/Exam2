@@ -24,4 +24,4 @@ public class ClassCreateAction extends Action {
         // JSPへフォワード
         req.getRequestDispatcher("class_create.jsp").forward(req, res);
     }
-}
+} 

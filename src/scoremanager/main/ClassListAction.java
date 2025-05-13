@@ -39,4 +39,4 @@ public class ClassListAction extends Action {
         // JSPへフォワード
         req.getRequestDispatcher("class_list.jsp").forward(req, res);
     }
-}
+} 

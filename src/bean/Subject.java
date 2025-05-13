@@ -29,4 +29,4 @@ public class Subject {
 	public void setSchool(School school) {
 		this.school = school;
 	}
-}
+}  

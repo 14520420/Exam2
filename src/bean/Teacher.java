@@ -70,4 +70,4 @@ public class Teacher extends User implements Serializable {
 	public void setAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
-}
+} 

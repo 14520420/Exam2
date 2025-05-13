@@ -50,4 +50,4 @@ public class ClassUpdateAction extends Action {
         // JSPへフォワード
         req.getRequestDispatcher("class_update.jsp").forward(req, res);
     }
-}
+} 
