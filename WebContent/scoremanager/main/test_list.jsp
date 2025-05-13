@@ -71,19 +71,30 @@
       <c:choose>
         <c:when test="${tests.size()>0}">
           <div class="mt-2">検索結果: ${tests.size()} 件</div>
-          <table class="table table-hover">
-            <thead><tr><th>学生番号</th><th>氏名</th><th>得点</th><th>クラス</th></tr></thead>
-            <tbody>
-              <c:forEach var="t" items="${tests}">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
                 <tr>
-                  <td>${t.student.no}</td>
-                  <td>${empty t.student.name ? '－' : t.student.name}</td>
-                  <td>${t.point}</td>
-                  <td>${t.classNum}</td>
+                  <th>入学年度</th>
+                  <th>クラス</th>
+                  <th>学生番号</th>
+                  <th>氏名</th>
+                  <th>点数</th>
                 </tr>
-              </c:forEach>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <c:forEach var="t" items="${tests}">
+                  <tr>
+                    <td>${t.student.entYear}</td>
+                    <td>${t.classNum}</td>
+                    <td>${t.student.no}</td>
+                    <td>${empty t.student.name ? '－' : t.student.name}</td>
+                    <td>${t.point}</td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
+          </div>
         </c:when>
         <c:otherwise>
           <div class="text-muted mt-2">該当するデータはありません。</div>
