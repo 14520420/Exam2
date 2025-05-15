@@ -56,7 +56,8 @@ public class TeacherUpdateExecuteAction extends Action {
         if (schoolCd == null || schoolCd.trim().isEmpty()) {
             errors.put("school_cd", "学校を選択してください");
         }
-     // エラーがある場合は学校リストを取得して入力画面に戻る
+
+        // エラーがある場合は入力画面に戻る
         if (!errors.isEmpty()) {
             SchoolDao schoolDao = new SchoolDao();
             List<School> schoolList = schoolDao.getAllSchools();
@@ -97,7 +98,6 @@ public class TeacherUpdateExecuteAction extends Action {
             errors.put("db", "教員情報の更新に失敗しました");
 
             List<School> schoolList = schoolDao.getAllSchools();
-
             req.setAttribute("errors", errors);
             req.setAttribute("id", id);
             req.setAttribute("password", password);

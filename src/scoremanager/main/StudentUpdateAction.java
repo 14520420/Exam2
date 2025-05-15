@@ -1,3 +1,5 @@
+// 6. StudentUpdateAction.java の修正版
+
 package scoremanager.main;
 
 import java.time.LocalDate;
@@ -28,10 +30,12 @@ public class StudentUpdateAction extends Action {
 
         // 学生情報が存在する場合
         if (student != null) {
-            // 入学年度選択肢の準備（現在の年の±10年）
+            // 入学年度選択肢の準備（現在から過去10年）
             int currentYear = LocalDate.now().getYear();
             List<Integer> entYearSet = new ArrayList<>();
-            for (int i = currentYear - 10; i <= currentYear; i++) {
+
+            // 年度を降順で準備（現在→過去）
+            for (int i = currentYear; i >= currentYear - 10; i--) {
                 entYearSet.add(i);
             }
 
@@ -43,6 +47,18 @@ public class StudentUpdateAction extends Action {
             // クラス番号リストを取得
             ClassNumDao classNumDao = new ClassNumDao();
             List<String> sclassList = classNumDao.filter(school);
+
+            // クラス番号をソート
+            sclassList.sort((a, b) -> {
+                try {
+                    int aNum = Integer.parseInt(a);
+                    int bNum = Integer.parseInt(b);
+                    return Integer.compare(aNum, bNum);
+                } catch (NumberFormatException e) {
+                    // 数値変換できない場合は文字列比較
+                    return a.compareTo(b);
+                }
+            });
 
             // リクエストスコープに属性をセット
             req.setAttribute("student", student);
@@ -57,4 +73,4 @@ public class StudentUpdateAction extends Action {
             req.getRequestDispatcher("/main/student_list.jsp").forward(req, res);
         }
     }
-} 
+}

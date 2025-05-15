@@ -1,3 +1,5 @@
+// 2. StudentCreateAction.java の修正版
+
 package scoremanager.main;
 
 import java.time.LocalDate;
@@ -15,68 +17,85 @@ import tool.Action;
 
 
 public class StudentCreateAction extends Action{
-	public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-		//セッションのユーザデータを取得
-		HttpSession session = req.getSession();
-		Teacher teacher = (Teacher) session.getAttribute("user");
+    public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        //セッションのユーザデータを取得
+        HttpSession session = req.getSession();
+        Teacher teacher = (Teacher) session.getAttribute("user");
 
-		String entYearStr = "";//入力された入学年度
-		String classNum = "";//入力されたクラス番号
-		String isAttendStr = "";
-		int entYear = 0;//入学年度
-		boolean isAttend = false;
-		List<Student> students = null;//学生リスト
+        // セッションチェック
+        if (teacher == null || !teacher.isAuthenticated()) {
+            res.sendRedirect("../Login.action");
+            return;
+        }
 
-		LocalDate todaysDate = LocalDate.now();;//LcalDateインスタンスを取得
-		int year = todaysDate.getYear();//現在の年を取得
+        String entYearStr = "";//入力された入学年度
+        String classNum = "";//入力されたクラス番号
+        String isAttendStr = "";
+        int entYear = 0;//入学年度
+        boolean isAttend = false;
+        List<Student> students = null;//学生リスト
 
-		ClassNumDao cNumDao = new ClassNumDao();//クラス番号Dao
+        LocalDate todaysDate = LocalDate.now();//LcalDateインスタンスを取得
+        int currentYear = todaysDate.getYear();//現在の年を取得
 
-		//リクエストパラメータ―の取得
-		entYearStr = req.getParameter("f1");
-		classNum = req.getParameter("f2");
-		isAttendStr = req.getParameter("f3");
+        ClassNumDao cNumDao = new ClassNumDao();//クラス番号Dao
 
-		//ビジネスロジック
-		if (entYearStr != null) {
-			//数値に変換
-			entYear = Integer.parseInt(entYearStr);
-		}
-		//list初期化
-		List<Integer> entYearSet = new ArrayList<>();
+        //リクエストパラメータ―の取得
+        entYearStr = req.getParameter("f1");
+        classNum = req.getParameter("f2");
+        isAttendStr = req.getParameter("f3");
 
-		//10年前～１年後までリストに追加
-		for (int i = year - 10; i < year + 1; i++) {
-			entYearSet.add(i);
-		}
+        //ビジネスロジック
+        if (entYearStr != null && !entYearStr.isEmpty()) {
+            //数値に変換
+            try {
+                entYear = Integer.parseInt(entYearStr);
+            } catch (NumberFormatException e) {
+                entYear = 0; // エラー時はデフォルト値
+            }
+        }
 
-		//DBからデータ取得
-		List<String> list = cNumDao.filter(teacher.getSchool());
+        //list初期化 - 年度リストを降順に設定（現在から過去へ）
+        List<Integer> entYearSet = new ArrayList<>();
+        for (int i = currentYear; i >= currentYear - 10; i--) {
+            entYearSet.add(i);
+        }
 
+        //DBからデータ取得
+        List<String> list = cNumDao.filter(teacher.getSchool());
 
-		//レスポンス値をセット 6
-		//リクエストに入学年度をセット
-		req.setAttribute ("f1", entYear);
+        // クラス番号のソート
+        list.sort((a, b) -> {
+            try {
+                int aNum = Integer.parseInt(a);
+                int bNum = Integer.parseInt(b);
+                return Integer.compare(aNum, bNum);
+            } catch (NumberFormatException e) {
+                // 数値変換できない場合は文字列比較
+                return a.compareTo(b);
+            }
+        });
 
-		//リクエストにクラス番号をセット
-		req.setAttribute ("f2", classNum);
+        //レスポンス値をセット 6
+        //リクエストに入学年度をセット
+        req.setAttribute("f1", entYear);
 
-		if (isAttendStr != null) {
+        //リクエストにクラス番号をセット
+        req.setAttribute("f2", classNum);
 
-		isAttend = true;
+        if (isAttendStr != null) {
+            isAttend = true;
+            req.setAttribute("f3", isAttendStr);
+        }
 
-		req. setAttribute ("f3", isAttendStr) ;
-		}
+        //リクエストに学生をセット
+        req.setAttribute("students", students);
 
-		//リクエストに学生をセット
-		req. setAttribute ("students", students) ;
+        //リクエストにデータをセット
+        req.setAttribute("class_num_set", list);
+        req.setAttribute("ent_year_set", entYearSet);
 
-		//リクエストにデータをセット
-		req. setAttribute ("class_num_set", list) ;
-		req. setAttribute ("ent_year_set", entYearSet) ;
-
-		//フォワード
-		req. getRequestDispatcher ("student_create.jsp"). forward (req, res) ;
-
-	}
-} 
+        //フォワード
+        req.getRequestDispatcher("student_create.jsp").forward(req, res);
+    }
+}

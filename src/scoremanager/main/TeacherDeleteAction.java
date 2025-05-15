@@ -59,4 +59,4 @@ public class TeacherDeleteAction extends Action {
         // JSPへフォワード
         req.getRequestDispatcher("teacher_delete.jsp").forward(req, res);
     }
-} 
+}

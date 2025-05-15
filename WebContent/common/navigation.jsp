@@ -16,4 +16,4 @@
 	<c:if test="${user.isAdmin()}">
 		<li class="nav-item mb-3"><a href="TeacherList.action">教員管理</a></li>
 	</c:if>
-</ul> 
+</ul>

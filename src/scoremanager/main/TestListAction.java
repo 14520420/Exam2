@@ -1,3 +1,6 @@
+// 同様に、他のアクションクラスでも年度表示範囲の拡大
+// TestListAction.java の修正版
+
 package scoremanager.main;
 
 import java.time.LocalDate;
@@ -45,15 +48,31 @@ public class TestListAction extends Action {
     String testNo    = nv(req.getParameter("f4"));
     String studentKW = nv(req.getParameter("studentInfo"));
 
-    // プルダウン用データを準備
-    int now = LocalDate.now().getYear();
+    // プルダウン用データを準備 - 年度範囲を拡大
+    int currentYear = LocalDate.now().getYear();
     List<Integer> entYearSet = new ArrayList<>();
-    for (int y = now - 10; y <= now; y++) entYearSet.add(y);
+
+    // 過去20年と未来5年を表示（より広い範囲）
+    for (int y = currentYear + 5; y >= currentYear - 20; y--) {
+        entYearSet.add(y);
+    }
 
     ClassNumDao cDao = new ClassNumDao();
     SubjectDao  sDao = new SubjectDao();
-    List<String>  classNumSet = nvl(cDao.filter(school));
-    List<Subject> subjects    = nvl(sDao.filter(school));
+    List<String> classNumSet = nvl(cDao.filter(school));
+
+    // クラス番号のソート
+    classNumSet.sort((a, b) -> {
+        try {
+            int aNum = Integer.parseInt(a);
+            int bNum = Integer.parseInt(b);
+            return Integer.compare(aNum, bNum);
+        } catch (NumberFormatException e) {
+            return a.compareTo(b);
+        }
+    });
+
+    List<Subject> subjects = nvl(sDao.filter(school));
 
     req.setAttribute("ent_year_set", entYearSet);
     req.setAttribute("class_num_set", classNumSet);
@@ -99,4 +118,4 @@ public class TestListAction extends Action {
   private <T> List<T> nvl(List<T> l) {
       return l == null ? new ArrayList<>() : l;
   }
-} 
+}

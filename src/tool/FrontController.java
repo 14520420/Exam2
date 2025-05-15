@@ -27,7 +27,8 @@ public class FrontController extends HttpServlet {
                 Teacher user = (Teacher) session.getAttribute("user");
 
                 if (user == null || !user.isAuthenticated()) {
-                    // 認証されていない場合、ログインページにリダイレクト
+                    // 認証されていない
+                	// 認証されていない場合、ログインページにリダイレクト
                     res.sendRedirect("/exam/scoremanager/Login.action");
                     return;
                 }
@@ -73,4 +74,4 @@ public class FrontController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         doGet(req, res);
     }
-} 
+}

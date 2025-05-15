@@ -64,7 +64,7 @@ public class TeacherCreateExecuteAction extends Action {
             errors.put("id", "この教員IDは既に登録されています");
         }
 
-        // エラーがある場合は学校リストを取得して入力画面に戻る
+        // エラーがある場合は入力画面に戻る
         if (!errors.isEmpty()) {
             SchoolDao schoolDao = new SchoolDao();
             List<School> schoolList = schoolDao.getAllSchools();
@@ -103,9 +103,7 @@ public class TeacherCreateExecuteAction extends Action {
             // 失敗した場合はエラーメッセージを表示して入力画面へ
             errors.put("db", "教員の登録に失敗しました");
 
-            SchoolDao dao = new SchoolDao();
-            List<School> schoolList = dao.getAllSchools();
-
+            List<School> schoolList = schoolDao.getAllSchools();
             req.setAttribute("errors", errors);
             req.setAttribute("id", id);
             req.setAttribute("password", password);

@@ -1,3 +1,4 @@
+<%-- student_list.jsp の完全修正版 - インラインスタイル --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -56,28 +57,29 @@
 			<c:choose>
 				<c:when test="${students.size() > 0}">
 					<div>検索結果: ${students.size()}件</div>
-					<table class="table table-hover">
+					<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #e0e0e0;">
 						<tr>
-							<th>入学年度</th>
-							<th>学生番号</th>
-							<th>氏名</th>
-							<th>クラス</th>
-							<th class="text-center">在学</th>
-							<th></th>
+							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">入学年度</th>
+							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">学生番号</th>
+							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">氏名</th>
+							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">クラス</th>
+							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">在学</th>
+							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;"></th>
 						</tr>
 						<c:forEach var="student" items="${students}">
 							<tr>
-								<td>${student.entYear}</td>
-								<td>${student.no}</td>
-								<td>${student.name}</td>
-								<td>${student.classNum}</td>
-								<td class="text-center">
-									<%-- 在学フラグが立っている場合は「〇」、それ以外は「×」を表示 --%> <c:choose>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.entYear}</td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.no}</td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.name}</td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.classNum}</td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: center; background-color: #ffffff;">
+									<c:choose>
 										<c:when test="${student.isAttend()}">〇</c:when>
 										<c:otherwise>×</c:otherwise>
 									</c:choose>
 								</td>
-								<td><a href="StudentUpdate.action?no=${student.no}">編集</a>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">
+									<a href="StudentUpdate.action?no=${student.no}" style="color: #0000ff; text-decoration: none;">編集</a>
 								</td>
 							</tr>
 						</c:forEach>
@@ -89,4 +91,4 @@
 			</c:choose>
 		</section>
 	</c:param>
-</c:import> 
+</c:import>

@@ -1,19 +1,13 @@
 package bean;
 
 public class User {
-	/**
-	 * 認証済みフラグ:boolean true:認証済み
-	 */
-	private boolean isAuthenticated;
+    private boolean isAuthenticated; // 認証済みフラグ
 
-	/**
-	 * ゲッター、セッター
-	 */
-	public boolean isAuthenticated() {
-		return isAuthenticated;
-	}
+    public boolean isAuthenticated() {
+        return isAuthenticated;
+    }
 
-	public void setAuthenticated(boolean isAuthenticated) {
-		this.isAuthenticated = isAuthenticated;
-	}
-} 
+    public void setAuthenticated(boolean isAuthenticated) {
+        this.isAuthenticated = isAuthenticated;
+    }
+}

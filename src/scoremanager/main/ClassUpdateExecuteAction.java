@@ -1,3 +1,5 @@
+// ClassUpdateExecuteAction.java の該当部分の修正
+
 package scoremanager.main;
 
 import java.util.HashMap;
@@ -64,7 +66,9 @@ public class ClassUpdateExecuteAction extends Action {
         classNum.setOld_class_num(oldClassNum);
         classNum.setSchool(school);
 
+        // ここの部分を修正
         ClassNumDao dao = new ClassNumDao();
+        // dao変数を使ってupdateメソッドを呼び出す
         boolean result = dao.update(classNum);
 
         if (result) {
@@ -81,4 +85,4 @@ public class ClassUpdateExecuteAction extends Action {
             req.getRequestDispatcher("class_update.jsp").forward(req, res);
         }
     }
-} 
+}

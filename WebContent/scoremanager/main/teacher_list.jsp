@@ -15,7 +15,7 @@
 
       <!-- 教員一覧表示 -->
       <c:choose>
-        <c:when test="${not empty teachers && teachers.size() > 0}">
+        <c:when test="${not empty teacherList && teacherList.size() > 0}">
           <table class="table table-hover">
             <thead>
               <tr>
@@ -28,7 +28,7 @@
               </tr>
             </thead>
             <tbody>
-              <c:forEach var="teacher" items="${teachers}">
+              <c:forEach var="teacher" items="${teacherList}">
                 <tr>
                   <td>${teacher.id}</td>
                   <td>${teacher.name}</td>
@@ -40,7 +40,12 @@
                     </c:choose>
                   </td>
                   <td><a href="TeacherUpdate.action?id=${teacher.id}">編集</a></td>
-                  <td><a href="TeacherDelete.action?id=${teacher.id}" class="text-danger" onclick="return confirm('本当に削除しますか？');">削除</a></td>
+                  <td>
+                    <c:if test="${teacher.id != sessionScope.user.id}">
+                      <a href="TeacherDelete.action?id=${teacher.id}" class="text-danger"
+                         onclick="return confirm('本当に削除しますか？');">削除</a>
+                    </c:if>
+                  </td>
                 </tr>
               </c:forEach>
             </tbody>
@@ -58,4 +63,4 @@
       </div>
     </section>
   </c:param>
-</c:import> 
+</c:import>

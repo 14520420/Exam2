@@ -1,3 +1,4 @@
+<%-- subject_list.jsp の完全修正版 - インラインスタイル --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -15,30 +16,35 @@
 			</div>
 
 			<!-- 科目一覧表示 -->
-			<table class="table table-hover">
+			<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #e0e0e0;">
 				<tr>
-					<th>科目コード</th>
-					<th>科目名</th>
-					<th></th>
-					<th></th>
+					<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">科目コード</th>
+					<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">科目名</th>
+					<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;"></th>
+					<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;"></th>
 				</tr>
-
 				<c:choose>
 					<c:when test="${not empty subjects}">
 						<c:forEach var="subject" items="${subjects}">
 							<tr>
-								<td>${subject.cd}</td>
-								<td>${subject.name}</td>
-								<td><a href="SubjectUpdate.action?cd=${subject.cd}">変更</a></td>
-								<td><a href="SubjectDelete.action?cd=${subject.cd}">削除</a></td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${subject.cd}</td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${subject.name}</td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">
+									<a href="SubjectUpdate.action?cd=${subject.cd}" style="color: #0000ff; text-decoration: none;">変更</a>
+								</td>
+								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">
+									<a href="SubjectDelete.action?cd=${subject.cd}" style="color: #0000ff; text-decoration: none;">削除</a>
+								</td>
 							</tr>
 						</c:forEach>
 					</c:when>
-
+					<c:otherwise>
+						<tr>
+							<td colspan="4" style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: center; background-color: #ffffff;">科目情報がありません</td>
+						</tr>
+					</c:otherwise>
 				</c:choose>
 			</table>
 		</section>
 	</c:param>
 </c:import>
->
- 

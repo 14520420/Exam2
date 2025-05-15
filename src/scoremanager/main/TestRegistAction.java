@@ -1,3 +1,5 @@
+// TestRegistAction.java の修正版 - 年度表示範囲の拡大
+
 package scoremanager.main;
 
 import java.time.LocalDate;
@@ -28,17 +30,34 @@ public class TestRegistAction extends Action {
                 return;
             }
 
-            // 入学年度リストを作成（現在年から5年前まで）
+            // 入学年度リストを作成 - 範囲を拡大
             int currentYear = LocalDate.now().getYear();
             List<Integer> entYearList = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                entYearList.add(currentYear - i);
+
+            // 過去20年と未来5年を表示（幅広い範囲）
+            for (int i = 0; i <= 25; i++) {
+                // i=0から始めると currentYear+5, currentYear+4, ..., currentYear, ..., currentYear-20 となる
+                entYearList.add(currentYear + 5 - i);
             }
+
             request.setAttribute("entYearList", entYearList);
 
             // クラス番号リストを取得
             ClassNumDao classNumDao = new ClassNumDao();
             List<String> classNumStrList = classNumDao.filter(teacher.getSchool());
+
+            // クラス番号をソート
+            classNumStrList.sort((a, b) -> {
+                try {
+                    int aNum = Integer.parseInt(a);
+                    int bNum = Integer.parseInt(b);
+                    return Integer.compare(aNum, bNum);
+                } catch (NumberFormatException e) {
+                    // 数値変換できない場合は文字列比較
+                    return a.compareTo(b);
+                }
+            });
+
             List<ClassNum> classList = new ArrayList<>();
             for (String num : classNumStrList) {
                 ClassNum c = new ClassNum();
@@ -55,7 +74,7 @@ public class TestRegistAction extends Action {
             // 検索条件の取得
             String entYear = request.getParameter("ent_year");
             String classNum = request.getParameter("class_num");
-            String subjectCd = request.getParameter("subject_cd"); // 'subjectId' ではなく 'cd' を使用
+            String subjectCd = request.getParameter("subject_cd");
             String no = request.getParameter("no");
 
             // 検索条件がすべて入力されていれば処理
@@ -95,4 +114,4 @@ public class TestRegistAction extends Action {
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
-} 
+}

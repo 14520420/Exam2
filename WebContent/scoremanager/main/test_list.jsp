@@ -1,3 +1,4 @@
+<%-- test_list.jsp の完全修正版 - インラインスタイル --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -72,27 +73,23 @@
         <c:when test="${tests.size()>0}">
           <div class="mt-2">検索結果: ${tests.size()} 件</div>
           <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #e0e0e0;">
+              <tr>
+                <th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">入学年度</th>
+                <th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">クラス</th>
+                <th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">学生番号</th>
+                <th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">氏名</th>
+                <th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">点数</th>
+              </tr>
+              <c:forEach var="t" items="${tests}">
                 <tr>
-                  <th>入学年度</th>
-                  <th>クラス</th>
-                  <th>学生番号</th>
-                  <th>氏名</th>
-                  <th>点数</th>
+                  <td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${t.student.entYear}</td>
+                  <td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${t.classNum}</td>
+                  <td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${t.student.no}</td>
+                  <td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${empty t.student.name ? '－' : t.student.name}</td>
+                  <td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${t.point}</td>
                 </tr>
-              </thead>
-              <tbody>
-                <c:forEach var="t" items="${tests}">
-                  <tr>
-                    <td>${t.student.entYear}</td>
-                    <td>${t.classNum}</td>
-                    <td>${t.student.no}</td>
-                    <td>${empty t.student.name ? '－' : t.student.name}</td>
-                    <td>${t.point}</td>
-                  </tr>
-                </c:forEach>
-              </tbody>
+              </c:forEach>
             </table>
           </div>
         </c:when>
@@ -104,4 +101,4 @@
 
     </section>
   </c:param>
-</c:import> 
+</c:import>

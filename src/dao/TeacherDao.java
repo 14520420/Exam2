@@ -7,150 +7,57 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.School;
 import bean.Teacher;
 
 public class TeacherDao extends Dao {
 
     /**
-     * getメソッド 教員IDを指定して教員インスタンスを1件取得する
-     *
-     * @param id:String 教員ID
-     * @return 教員クラスのインスタンス（存在しない場合はnull）
-     * @throws Exception
+     * 教員IDを指定して教員インスタンスを取得する
      */
     public Teacher get(String id) throws Exception {
-        // 教員インスタンスを初期化
         Teacher teacher = new Teacher();
-        // コネクションを確立
         Connection connection = getConnection();
-        // プリペアードステートメント
         PreparedStatement statement = null;
 
         try {
-            // SQL文をセット
-            statement = connection.prepareStatement("select * from teacher where id=?");
-            // 教員IDをバインド
+            statement = connection.prepareStatement("SELECT * FROM teacher WHERE id = ?");
             statement.setString(1, id);
-            // SQLを実行
             ResultSet resultSet = statement.executeQuery();
-
-            // 学校情報を取得するためのSchoolDao
             SchoolDao schoolDao = new SchoolDao();
 
             if (resultSet.next()) {
-                // 結果がある場合、教員情報をセット
                 teacher.setId(resultSet.getString("id"));
                 teacher.setPassword(resultSet.getString("password"));
                 teacher.setName(resultSet.getString("name"));
 
-                // 修正点: admin列を使用
-                // データベースのテーブル構造に合わせて以下のいずれかを使用
+                // 管理者フラグの取得（DB構造に応じて列名を調整）
                 try {
-                    // 可能性1: 列名が "is_admin"
                     teacher.setAdmin(resultSet.getBoolean("is_admin"));
                 } catch (SQLException e) {
                     try {
-                        // 可能性2: 列名が "admin"
                         teacher.setAdmin(resultSet.getBoolean("admin"));
                     } catch (SQLException e2) {
-                        // どちらの列も存在しない場合、デフォルト値を設定
                         teacher.setAdmin(false);
                         System.err.println("警告: teacher テーブルに admin または is_admin 列が見つかりません");
                     }
                 }
 
-                // 学校情報をセット（学校コードから検索）
                 teacher.setSchool(schoolDao.get(resultSet.getString("school_cd")));
             } else {
-                // 結果がなければ null
                 teacher = null;
             }
         } catch (Exception e) {
             throw e;
         } finally {
-            // statementを閉じる
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException sqle) {
-                    throw sqle;
-                }
-            }
-            // connectionを閉じる
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException sqle) {
-                    throw sqle;
-                }
-            }
+            if (statement != null) try { statement.close(); } catch (SQLException sqle) { throw sqle; }
+            if (connection != null) try { connection.close(); } catch (SQLException sqle) { throw sqle; }
         }
 
         return teacher;
     }
 
     /**
-     * 指定した学校の教員一覧を取得
-     *
-     * @param school 学校情報
-     * @return 教員リスト
-     * @throws Exception
-     */
-    public List<Teacher> filter(School school) throws Exception {
-        List<Teacher> list = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-
-        try {
-            connection = getConnection();
-            statement = connection.prepareStatement(
-                "SELECT * FROM teacher WHERE school_cd = ? ORDER BY id"
-            );
-            statement.setString(1, school.getCd());
-            resultSet = statement.executeQuery();
-
-            SchoolDao schoolDao = new SchoolDao();
-
-            while (resultSet.next()) {
-                Teacher teacher = new Teacher();
-                teacher.setId(resultSet.getString("id"));
-                teacher.setPassword(resultSet.getString("password"));
-                teacher.setName(resultSet.getString("name"));
-
-                // 修正点: admin列を使用
-                try {
-                    // 可能性1: 列名が "is_admin"
-                    teacher.setAdmin(resultSet.getBoolean("is_admin"));
-                } catch (SQLException e) {
-                    try {
-                        // 可能性2: 列名が "admin"
-                        teacher.setAdmin(resultSet.getBoolean("admin"));
-                    } catch (SQLException e2) {
-                        // どちらの列も存在しない場合、デフォルト値を設定
-                        teacher.setAdmin(false);
-                    }
-                }
-
-                teacher.setSchool(schoolDao.get(resultSet.getString("school_cd")));
-                list.add(teacher);
-            }
-        } catch (Exception e) {
-            throw new Exception("教員情報の取得中にエラーが発生しました: " + e.getMessage());
-        } finally {
-            if (resultSet != null) try { resultSet.close(); } catch (SQLException e) {}
-            if (statement != null) try { statement.close(); } catch (SQLException e) {}
-            if (connection != null) try { connection.close(); } catch (SQLException e) {}
-        }
-
-        return list;
-    }
-
-    /**
      * 全教員の一覧を取得
-     * @return 教員リスト
-     * @throws Exception
      */
     public List<Teacher> getAllTeachers() throws Exception {
         List<Teacher> list = new ArrayList<>();
@@ -160,11 +67,8 @@ public class TeacherDao extends Dao {
 
         try {
             connection = getConnection();
-            statement = connection.prepareStatement(
-                "SELECT * FROM teacher ORDER BY id"
-            );
+            statement = connection.prepareStatement("SELECT * FROM teacher ORDER BY id");
             resultSet = statement.executeQuery();
-
             SchoolDao schoolDao = new SchoolDao();
 
             while (resultSet.next()) {
@@ -173,16 +77,13 @@ public class TeacherDao extends Dao {
                 teacher.setPassword(resultSet.getString("password"));
                 teacher.setName(resultSet.getString("name"));
 
-                // 修正点: admin列を使用
+                // 管理者フラグの取得
                 try {
-                    // 可能性1: 列名が "is_admin"
                     teacher.setAdmin(resultSet.getBoolean("is_admin"));
                 } catch (SQLException e) {
                     try {
-                        // 可能性2: 列名が "admin"
                         teacher.setAdmin(resultSet.getBoolean("admin"));
                     } catch (SQLException e2) {
-                        // どちらの列も存在しない場合、デフォルト値を設定
                         teacher.setAdmin(false);
                     }
                 }
@@ -202,11 +103,7 @@ public class TeacherDao extends Dao {
     }
 
     /**
-     * 教員情報の保存（新規登録または更新）
-     *
-     * @param teacher 教員情報
-     * @return 成功した場合true、失敗した場合false
-     * @throws Exception
+     * 教員情報を保存（新規登録または更新）
      */
     public boolean save(Teacher teacher) throws Exception {
         Connection connection = null;
@@ -215,20 +112,17 @@ public class TeacherDao extends Dao {
 
         try {
             connection = getConnection();
-
-            // 既存の教員を検索
             Teacher existing = get(teacher.getId());
 
             if (existing == null) {
                 // 新規登録
-                // 修正点: SQL文でテーブル構造に合わせて列名を調整
                 try {
-                    // 可能性1: 列名が "is_admin"
+                    // is_admin 列を使用する場合
                     statement = connection.prepareStatement(
                         "INSERT INTO teacher (id, password, name, school_cd, is_admin) VALUES (?, ?, ?, ?, ?)"
                     );
                 } catch (SQLException e) {
-                    // 可能性2: 列名が "admin"
+                    // admin 列を使用する場合
                     statement = connection.prepareStatement(
                         "INSERT INTO teacher (id, password, name, school_cd, admin) VALUES (?, ?, ?, ?, ?)"
                     );
@@ -241,14 +135,13 @@ public class TeacherDao extends Dao {
                 statement.setBoolean(5, teacher.isAdmin());
             } else {
                 // 更新
-                // 修正点: SQL文でテーブル構造に合わせて列名を調整
                 try {
-                    // 可能性1: 列名が "is_admin"
+                    // is_admin 列を使用する場合
                     statement = connection.prepareStatement(
                         "UPDATE teacher SET password = ?, name = ?, school_cd = ?, is_admin = ? WHERE id = ?"
                     );
                 } catch (SQLException e) {
-                    // 可能性2: 列名が "admin"
+                    // admin 列を使用する場合
                     statement = connection.prepareStatement(
                         "UPDATE teacher SET password = ?, name = ?, school_cd = ?, admin = ? WHERE id = ?"
                     );
@@ -262,7 +155,6 @@ public class TeacherDao extends Dao {
             }
 
             count = statement.executeUpdate();
-
         } catch (Exception e) {
             throw new Exception("教員情報の保存中にエラーが発生しました: " + e.getMessage());
         } finally {
@@ -274,11 +166,7 @@ public class TeacherDao extends Dao {
     }
 
     /**
-     * 教員情報の削除
-     *
-     * @param id 教員ID
-     * @return 成功した場合true、失敗した場合false
-     * @throws Exception
+     * 教員情報を削除
      */
     public boolean delete(String id) throws Exception {
         Connection connection = null;
@@ -301,23 +189,18 @@ public class TeacherDao extends Dao {
     }
 
     /**
-     * loginメソッド 教員IDとパスワードで認証する
-     *
-     * @param id:String 教員ID
-     * @param password:String パスワード
-     * @return 認証成功：教員クラスのインスタンス、失敗：null
-     * @throws Exception
+     * ログイン認証
      */
     public Teacher login(String id, String password) throws Exception {
-        // 教員情報を取得
         Teacher teacher = get(id);
+
         // 教員が存在しない、またはパスワードが一致しない場合
         if (teacher == null || !teacher.getPassword().equals(password)) {
             return null;
         }
+
         // 認証成功したら、認証済みフラグを設定
         teacher.setAuthenticated(true);
-
         return teacher;
     }
 }
