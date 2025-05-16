@@ -283,4 +283,67 @@ public class TestDao extends Dao {
 
         return list;
     }
-} 
+    /**
+     * 指定した学校のすべてのテスト情報を取得する
+     *
+     * @param school 学校情報
+     * @return テスト情報のリスト
+     * @throws Exception
+     */
+    public List<Test> getAllTests(School school) throws Exception {
+        List<Test> list = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = getConnection();
+
+            // 学生情報とともにテストデータを取得するSQL
+            String sql = "SELECT t.*, s.name as student_name, s.ent_year, " +
+                         "sub.name as subject_name " +
+                         "FROM test t " +
+                         "JOIN student s ON t.student_no = s.no " +
+                         "JOIN subject sub ON t.subject_cd = sub.cd " +
+                         "WHERE t.school_cd = ? " +
+                         "ORDER BY s.ent_year, t.class_num, s.no, t.subject_cd, t.no";
+
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, school.getCd());
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Test test = new Test();
+
+                // 学生情報
+                Student student = new Student();
+                student.setNo(resultSet.getString("student_no"));
+                student.setName(resultSet.getString("student_name"));
+                student.setEntYear(resultSet.getInt("ent_year"));
+                test.setStudent(student);
+
+                // 科目情報
+                Subject subject = new Subject();
+                subject.setCd(resultSet.getString("subject_cd"));
+                subject.setName(resultSet.getString("subject_name"));
+                test.setSubject(subject);
+
+                // テスト情報
+                test.setSchool(school);
+                test.setNo(resultSet.getInt("no"));
+                test.setPoint(resultSet.getInt("point"));
+                test.setClassNum(resultSet.getString("class_num"));
+
+                list.add(test);
+            }
+        } catch (SQLException e) {
+            throw new Exception("テスト情報の取得中にエラーが発生しました: " + e.getMessage(), e);
+        } finally {
+            if (resultSet != null) try { resultSet.close(); } catch (SQLException e) {}
+            if (statement != null) try { statement.close(); } catch (SQLException e) {}
+            if (connection != null) try { connection.close(); } catch (SQLException e) {}
+        }
+
+        return list;
+    }
+}

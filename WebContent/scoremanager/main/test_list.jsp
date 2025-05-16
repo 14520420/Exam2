@@ -8,15 +8,14 @@
 
       <h2 class="h3 mb-3 fw-normal bg-secondary bg-opacity-10 py-2 px-4">得点一覧（科目）</h2>
 
-      <!-- ======== 検索フォーム ======== -->
+      <!-- 検索フォーム -->
       <form method="get">
-        <!-- 1 段目 -->
         <div class="row border mx-3 py-2 rounded mb-2 align-items-center">
           <!-- 入学年度 -->
           <div class="col-3">
             <label class="form-label">入学年度</label>
             <select name="f1" class="form-select">
-              <option value="">--</option>
+              <option value="">-------</option>
               <c:forEach var="y" items="${ent_year_set}">
                 <option value="${y}" <c:if test="${conditions['entYear']==y.toString()}">selected</c:if>>${y}</option>
               </c:forEach>
@@ -27,7 +26,7 @@
           <div class="col-3">
             <label class="form-label">クラス</label>
             <select name="f2" class="form-select">
-              <option value="">--</option>
+              <option value="">-------</option>
               <c:forEach var="c" items="${class_num_set}">
                 <option value="${c}" <c:if test="${conditions['classNum']==c}">selected</c:if>>${c}</option>
               </c:forEach>
@@ -38,40 +37,44 @@
           <div class="col-3">
             <label class="form-label">科目</label>
             <select name="f3" class="form-select">
-              <option value="">--</option>
+              <option value="">-------</option>
               <c:forEach var="s" items="${subjects}">
                 <option value="${s.cd}" <c:if test="${conditions['subjectCd']==s.cd}">selected</c:if>>${s.name}</option>
               </c:forEach>
             </select>
           </div>
 
-          <!-- ボタン -->
-          <div class="col-3 text-center">
-            <label class="form-label d-block">&nbsp;</label>
-            <button class="btn btn-secondary">絞込</button>
+          <!-- 回数 -->
+          <div class="col-3">
+            <label class="form-label">回数</label>
+            <select name="f4" class="form-select">
+              <option value="">-------</option>
+              <c:forEach var="n" items="${no_set}">
+                <option value="${n}" <c:if test="${conditions['no']==n.toString()}">selected</c:if>>${n}</option>
+              </c:forEach>
+            </select>
           </div>
         </div>
 
-        <!-- 2 段目（学生情報）-->
-        <div class="row border mx-3 py-2 rounded align-items-center">
-          <div class="col-9">
-            <label class="form-label">学生番号 / 氏名</label>
-            <input type="text" name="studentInfo" class="form-control"
-                   value="${conditions['studentInfo']}">
-          </div>
-          <div class="col-3 text-center">
-            <label class="form-label d-block">&nbsp;</label>
-            <button class="btn btn-primary">検索</button>
+        <div class="row mx-3 text-center mb-3">
+          <div class="col-12">
+            <button class="btn btn-secondary" id="filter-button">検索</button>
           </div>
         </div>
       </form>
-      <!-- ======== /検索フォーム ======== -->
 
-      <!-- ======== 検索結果 ======== -->
+      <!-- エラーメッセージ表示 -->
+      <c:if test="${not empty error}">
+        <div class="alert alert-danger mx-3">
+          ${error}
+        </div>
+      </c:if>
+
+      <!-- 検索結果 -->
       <c:choose>
-        <c:when test="${tests.size()>0}">
-          <div class="mt-2">検索結果: ${tests.size()} 件</div>
-          <div class="table-responsive">
+        <c:when test="${not empty tests && tests.size() > 0}">
+          <div class="mt-2 mx-3">検索結果: ${tests.size()} 件</div>
+          <div class="table-responsive mx-3">
             <table class="table table-hover">
               <thead>
                 <tr>
@@ -79,6 +82,8 @@
                   <th>クラス</th>
                   <th>学生番号</th>
                   <th>氏名</th>
+                  <th>科目</th>
+                  <th>回数</th>
                   <th>点数</th>
                 </tr>
               </thead>
@@ -89,6 +94,8 @@
                     <td>${t.classNum}</td>
                     <td>${t.student.no}</td>
                     <td>${empty t.student.name ? '－' : t.student.name}</td>
+                    <td>${t.subject.name}</td>
+                    <td>${t.no}</td>
                     <td>${t.point}</td>
                   </tr>
                 </c:forEach>
@@ -97,14 +104,13 @@
           </div>
         </c:when>
         <c:otherwise>
-          <div class="alert alert-info">
-            該当するデータはありません。
+          <div class="alert alert-info mx-3">
+            該当するデータがありません。
           </div>
         </c:otherwise>
       </c:choose>
-      <!-- ======== /検索結果 ======== -->
 
-      <div class="mt-3">
+      <div class="mt-3 mx-3">
         <a href="Menu.action" class="btn btn-secondary">メニューに戻る</a>
       </div>
     </section>
