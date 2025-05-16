@@ -40,12 +40,7 @@
                     </c:choose>
                   </td>
                   <td><a href="TeacherUpdate.action?id=${teacher.id}">編集</a></td>
-                  <td>
-                    <c:if test="${teacher.id != sessionScope.user.id}">
-                      <a href="TeacherDelete.action?id=${teacher.id}" class="text-danger"
-                         onclick="return confirm('本当に削除しますか？');">削除</a>
-                    </c:if>
-                  </td>
+                  <td><a href="TeacherDelete.action?id=${teacher.id}" class="text-danger" onclick="return confirm('本当に削除しますか？');">削除</a></td>
                 </tr>
               </c:forEach>
             </tbody>

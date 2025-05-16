@@ -1,5 +1,6 @@
 package scoremanager.main;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class TeacherCreateExecuteAction extends Action {
         // 管理者権限のチェック
         if (!loginTeacher.isAdmin()) {
             req.setAttribute("error", "この機能を使用する権限がありません");
-            req.getRequestDispatcher("error.jsp").forward(req, res);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
             return;
         }
 
@@ -67,7 +68,14 @@ public class TeacherCreateExecuteAction extends Action {
         // エラーがある場合は入力画面に戻る
         if (!errors.isEmpty()) {
             SchoolDao schoolDao = new SchoolDao();
-            List<School> schoolList = schoolDao.getAllSchools();
+            List<School> schoolList = null;
+            try {
+                // filter(null)からgetAllSchools()に変更
+                schoolList = schoolDao.getAllSchools();
+            } catch (Exception e) {
+                System.err.println("学校一覧の取得に失敗: " + e.getMessage());
+                schoolList = new ArrayList<>();
+            }
 
             req.setAttribute("errors", errors);
             req.setAttribute("id", id);
@@ -103,7 +111,14 @@ public class TeacherCreateExecuteAction extends Action {
             // 失敗した場合はエラーメッセージを表示して入力画面へ
             errors.put("db", "教員の登録に失敗しました");
 
-            List<School> schoolList = schoolDao.getAllSchools();
+            List<School> schoolList = null;
+            try {
+                // filter(null)からgetAllSchools()に変更
+                schoolList = schoolDao.getAllSchools();
+            } catch (Exception e) {
+                schoolList = new ArrayList<>();
+            }
+
             req.setAttribute("errors", errors);
             req.setAttribute("id", id);
             req.setAttribute("password", password);
