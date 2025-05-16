@@ -1,4 +1,3 @@
-<%-- student_list.jsp の完全修正版 - インラインスタイル --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -13,7 +12,7 @@
 			<h2 class="h3 mb-3 fw-normal bg-secondary bg-opacity-10 py-2 px-4">学生管理</h2>
 
 			<div class="my-2 text-end px-4">
-				<a href="StudentCreate.action">新規登録</a>
+				<a href="StudentCreate.action" class="btn btn-primary btn-sm">新規登録</a>
 			</div>
 
 			<form method="get">
@@ -54,41 +53,51 @@
 
 				<div class="mt-2 text-warning">${errors.get("f1")}</div>
 			</form>
+
 			<c:choose>
 				<c:when test="${students.size() > 0}">
 					<div>検索結果: ${students.size()}件</div>
-					<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #e0e0e0;">
-						<tr>
-							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">入学年度</th>
-							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">学生番号</th>
-							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">氏名</th>
-							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">クラス</th>
-							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;">在学</th>
-							<th style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; font-weight: normal; background-color: #ffffff;"></th>
-						</tr>
-						<c:forEach var="student" items="${students}">
+					<table class="table table-hover">
+						<thead>
 							<tr>
-								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.entYear}</td>
-								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.no}</td>
-								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.name}</td>
-								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">${student.classNum}</td>
-								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: center; background-color: #ffffff;">
-									<c:choose>
-										<c:when test="${student.isAttend()}">〇</c:when>
-										<c:otherwise>×</c:otherwise>
-									</c:choose>
-								</td>
-								<td style="border: 1px solid #e0e0e0; padding: 10px 15px; text-align: left; background-color: #ffffff;">
-									<a href="StudentUpdate.action?no=${student.no}" style="color: #0000ff; text-decoration: none;">編集</a>
-								</td>
+								<th>入学年度</th>
+								<th>学生番号</th>
+								<th>氏名</th>
+								<th>クラス</th>
+								<th class="text-center">在学</th>
+								<th></th>
 							</tr>
-						</c:forEach>
+						</thead>
+						<tbody>
+							<c:forEach var="student" items="${students}">
+								<tr>
+									<td>${student.entYear}</td>
+									<td>${student.no}</td>
+									<td>${student.name}</td>
+									<td>${student.classNum}</td>
+									<td class="text-center">
+										<c:choose>
+											<c:when test="${student.isAttend()}">〇</c:when>
+											<c:otherwise>-</c:otherwise>
+										</c:choose>
+									</td>
+									<td><a href="StudentUpdate.action?no=${student.no}">編集</a>
+									</td>
+								</tr>
+							</c:forEach>
+						</tbody>
 					</table>
 				</c:when>
 				<c:otherwise>
-					<div>学生情報が存在しませんでした。</div>
+					<div class="alert alert-info">
+						学生情報が存在しませんでした。
+					</div>
 				</c:otherwise>
 			</c:choose>
+
+			<div class="mt-3">
+				<a href="Menu.action" class="btn btn-secondary">メニューに戻る</a>
+			</div>
 		</section>
 	</c:param>
 </c:import>
