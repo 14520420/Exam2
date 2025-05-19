@@ -1,5 +1,3 @@
-// StudentListAction.java の修正版 - 過去の年度も未来の年度も全て表示
-
 package scoremanager.main;
 
 import java.time.LocalDate;
@@ -50,11 +48,11 @@ public class StudentListAction extends Action {
             }
         }
 
-        // 年度のリストを作成 - 過去と未来も含めた広い範囲を表示
+        // 年度のリストを作成 - 過去30年と未来10年を含めた広い範囲を表示
         List<Integer> entYearSet = new ArrayList<>();
 
-        // 例：現在から過去15年、未来5年までを表示（年度範囲を広げる）
-        for (int i = currentYear + 5; i >= currentYear - 15; i--) {
+        // 現在から過去30年、未来10年までを表示
+        for (int i = currentYear + 10; i >= currentYear - 30; i--) {
             entYearSet.add(i);
         }
 

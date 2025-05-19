@@ -40,11 +40,11 @@ public class TestRegist extends Action {
         // 学校情報を取得
         School school = teacher.getSchool();
 
-        // 入学年度リストを作成（現在年から5年前まで）
+        // 入学年度リストを作成（現在年から過去30年、未来10年までを表示）
         int currentYear = LocalDate.now().getYear();
         List<Integer> yearList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            yearList.add(currentYear - i);
+        for (int i = currentYear + 10; i >= currentYear - 30; i--) {
+            yearList.add(i);
         }
 
         // クラス番号リストを取得
@@ -57,7 +57,7 @@ public class TestRegist extends Action {
 
         // テスト回数リスト
         List<Integer> timesList = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 10; i++) {
             timesList.add(i);
         }
 
@@ -75,4 +75,5 @@ public class TestRegist extends Action {
 
         // JSPへフォワード
         request.getRequestDispatcher("test_regist.jsp").forward(request, response);
-    }}
+    }
+}

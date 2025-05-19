@@ -8,9 +8,12 @@
     <section class="me-4">
       <h2 class="h3 mb-3 fw-normal bg-secondary bg-opacity-10 py-2 px-4">教員管理</h2>
 
-      <!-- 新規登録リンク -->
+      <!-- 新規登録リンクとCSVボタン -->
       <div class="my-2 text-end px-4">
         <a href="TeacherCreate.action" class="btn btn-primary btn-sm">新規登録</a>
+        <!-- CSV操作ボタン追加 -->
+        <a href="TeacherCsvImport.action" class="btn btn-success btn-sm ms-2">CSVインポート</a>
+        <a href="TeacherCsvExport.action" class="btn btn-info btn-sm ms-2">CSVエクスポート</a>
       </div>
 
       <!-- 教員一覧表示 -->

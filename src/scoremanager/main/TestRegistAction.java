@@ -31,11 +31,11 @@ public class TestRegistAction extends Action {
 
             School school = teacher.getSchool();
 
-            // 入学年度リストを作成（現在年から20年前まで）
+            // 入学年度リストを作成（現在年から過去30年、未来10年までを表示）
             int currentYear = LocalDate.now().getYear();
             List<Integer> entYearList = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                entYearList.add(currentYear - i);
+            for (int i = currentYear + 10; i >= currentYear - 30; i--) {
+                entYearList.add(i);
             }
             request.setAttribute("entYearList", entYearList);
 
