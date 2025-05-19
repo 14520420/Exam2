@@ -3,6 +3,7 @@ package tool;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;  // 追加
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,11 @@ import javax.servlet.http.HttpSession;
 import bean.Teacher;
 
 @WebServlet(urlPatterns = { "*.action" })
+@MultipartConfig(  // この注釈を追加
+    fileSizeThreshold = 1024 * 1024,  // 1MB
+    maxFileSize = 1024 * 1024 * 10,   // 10MB
+    maxRequestSize = 1024 * 1024 * 50  // 50MB
+)
 public class FrontController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -28,7 +34,7 @@ public class FrontController extends HttpServlet {
 
                 if (user == null || !user.isAuthenticated()) {
                     // 認証されていない
-                	// 認証されていない場合、ログインページにリダイレクト
+                    // 認証されていない場合、ログインページにリダイレクト
                     res.sendRedirect("/exam/scoremanager/Login.action");
                     return;
                 }
