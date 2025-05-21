@@ -1,5 +1,5 @@
 package scoremanager.main;
-
+// 何故かsubjectを取ると別のファイルに接続されるわけわからんエラーが出るので一旦放置
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +8,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import bean.Student;
 import bean.Subject;
 import bean.Teacher;
+import bean.TestListStudent;
 import dao.ClassNumDao;
 import dao.StudentDao;
 import dao.SubjectDao;
+import dao.TestListStudentDao;
 import tool.Action;
 
-public class TestListAction extends Action {
+public class TestListStudentExecuteAction extends Action {
 	public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		//メソッドとスタブ
 		HttpSession session = req.getSession();
@@ -23,11 +26,32 @@ public class TestListAction extends Action {
 		LocalDate todaysDate = LocalDate.now();
 		int year = todaysDate.getYear();
 
-
-		// 使用するDAOを定義
-		ClassNumDao cNumDao =new ClassNumDao();
+		//使用するDAOを定義
+		TestListStudentDao tesStuDao =new TestListStudentDao();
+		StudentDao sDao = new StudentDao();
 		SubjectDao subDao =new SubjectDao();
-		StudentDao stuDao =new StudentDao();
+		ClassNumDao cNumDao =new ClassNumDao();
+
+		// JSPから送られてくるデータを定義
+		String studentNo = null ;
+
+		// JSPから送られてきたデータを取得
+		studentNo =req.getParameter("f4");
+
+		// JSPから送られてきたデータを利用し生徒のデータを取得
+		Student student = sDao.get(studentNo);
+
+		if (student == null){
+			String error1 ="成績情報が存在しませんでした";
+			req.setAttribute("error1",error1);
+			String url ="TestList.action";
+			req.getRequestDispatcher(url).forward(req, res);
+		}
+
+		//
+		List<TestListStudent> testListStudent = tesStuDao.filter(student);
+
+		System.out.println(testListStudent);
 
 		// 表示用の年度リストを作成
 		List<Integer> entYearSet = new ArrayList<>();
@@ -35,32 +59,20 @@ public class TestListAction extends Action {
 			entYearSet.add(i);
 		}
 
-		//StudentCreateExecuteActionからエラー処理用のデータを取得
-		String errors1 = (String)req.getAttribute("errors1");
-		String errors2 = (String)req.getAttribute("errors2");
-
 		// ログインユーザーの学校コードをもとにクラス番号の一覧を取得
 		List<String> classList = cNumDao.filter(teacher.getSchool());
-
+//
 		// ログインユーザーの学校コードをもとに科目の一覧を取得
 		List<Subject> subList = subDao.filter(teacher.getSchool());
 
-		// ログインユーザーの学校コードをもとに学生の一覧を取得する必要はなかったです
-//		List<Student> stuList =stuDao.filter(teacher.getSchool(),true);
-
-//		System.out.println(entYearSet);
-//		System.out.println(classList);
-//		System.out.println(subList);
-		// JSPに送るデータをセット
+		req.setAttribute("student_info",student);
+		req.setAttribute("score",testListStudent);
+		req.setAttribute("subject_set", subList);
 		req.setAttribute("ent_year_set",entYearSet);
 		req.setAttribute("class_num_set",classList);
-		req.setAttribute("subject_set", subList);
-//		req.setAttribute("student_set", stuList);
-		req.setAttribute("errors1",errors1);
-		req.setAttribute("errors2",errors2);
 
 		// フォワード
-	    req.getRequestDispatcher("test_list.jsp").forward(req, res);
+	    req.getRequestDispatcher("test_list_student.jsp").forward(req, res);
 	}
 
 }

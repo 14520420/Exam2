@@ -1,22 +1,19 @@
-<%--成績管理一覧 --%>
+<%--成績管理・生徒jsp --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%-- base.jsp を読み込み --%>
 <c:import url="/common/base.jsp">
-
-<%--タイトル設定 --%>
 <c:param name="title">
 得点管理システム
 </c:param>
 <c:param name="scripts"></c:param>
-
-<%--メイン --%>
 <c:param name="content">
 
+
 <section class="mb-3">
-	<%--見出し --%>
+<%--見出し --%>
     <h2 class="h3 mb-3 fw-normal bg-secondary bg-opacity-10 py-2 px-4">成績参照</h2>
 
     <%-- 検索条件1：入学年度・クラス・科目 --%>
@@ -25,25 +22,25 @@ pageEncoding="UTF-8"%>
     <form method="get" action="TestListSubjectExecute.action">
         <div class="row border mx-3 mb-3 py-2 align-items-center rounded">
 
-        	<%--入学年度 --%>
             <div class="col-2">
+            <%--入学年度 --%>
                 <label class="form-label">入学年度</label>
                 <select class="form-select" name="f1">
                     <option value="0">-----</option>
-                    <c:forEach var="ent_year" items="${ent_year_set}">
-                        <option value="${ent_year}" <c:if test="${ent_year==f1}">selected</c:if>>${ent_year}</option>
+                    <c:forEach var="year" items="${ent_year_set}">
+                        <option value="${year}" <c:if test="${year==f1}">selected</c:if>>${year}</option>
                     </c:forEach>
                 </select>
             </div>
 
 
-            <%--クラス --%>
             <div class="col-2">
+            <%--クラス --%>
                 <label class="form-label">クラス</label>
                 <select class="form-select" name="f2">
                     <option value="0">-----</option>
-                    <c:forEach var="class_num" items="${class_num_set}">
-                        <option value="${class_num}" <c:if test="${class_num==f2}">selected</c:if>>${class_num}</option>
+                    <c:forEach var="classNum" items="${class_num_set}">
+                        <option value="${classNum}" <c:if test="${classNum==f2}">selected</c:if>>${classNum}</option>
                     </c:forEach>
                 </select>
             </div>
@@ -60,18 +57,18 @@ pageEncoding="UTF-8"%>
                 </select>
             </div>
             <div class="col-2 text-center">
+
+
+            <%--検索ボタン --%>
                 <button class="btn btn-secondary">検索</button>
             </div>
-            <%-- hiddenで識別子 --%>
             <input type="hidden" name="f" value="sj">
         </div>
     </form>
 
     <%-- 検索条件2：学生番号 --%>
     <p class="fw-bold px-4">学生情報</p>
-    <%-- formタグを設定 あて先はExecuteAction --%>
     <form method="get" action="TestListStudentExecute.action">
-
         <div class="row border mx-3 mb-3 py-2 align-items-center rounded">
             <div class="col-2">
                 <label class="form-label">学生番号</label>
@@ -82,25 +79,41 @@ pageEncoding="UTF-8"%>
             <div class="col-2 text-center">
                 <button class="btn btn-secondary">検索</button>
             </div>
-            <%-- hiddenで識別子 --%>
             <input type="hidden" name="f" value="st">
         </div>
     </form>
 
-    <%-- エラーメッセージ --%>
+    <%-- ✅ エラーメッセージまとめ --%>
     <c:if test="${not empty errors['f1']}">
         <div class="text-danger mx-3">${errors['f1']}</div>
     </c:if>
-    	<%
-	    String error1 = (String)request.getAttribute("error1");
-    	String error2 = (String)request.getAttribute("error2");
-    	%>
-    	<% if(error1 != null) { %>
-   		<div style="color: orange;"><%= error1 %></div>
-		<% } %>
-		<% if(error2 != null) { %>
-   		<div style="color: orange;"><%= error2 %></div>
-		<% } %>
+    <c:if test="${empty test_list && not empty searched}">
+        <div class="text-danger mx-3">学生情報が存在しませんでした</div>
+    </c:if>
+
+    <%-- 成績一覧（学生） --%>
+    <c:if test="${not empty student_info}">
+       <div class="px-4 mb-2">
+        氏名：${student_info.name}（${student_info.no}）
+       </div>
+         <table class="table table-hover">
+                <tr>
+                   <th>科目名</th>
+                   <th>科目コード</th>
+                   <th>回数</th>
+                   <th>点数</th>
+                </tr>
+        <c:forEach var="score" items="${score}">
+            <tr>
+                <td>${score.subjectName}</td>
+                <td>${score.subjectCd}</td>
+                <td>${score.num}</td>
+                <td>${score.point}</td>
+            </tr>
+          </c:forEach>
+        </table>
+      </c:if>
+
 
     <%-- 利用方法メッセージ --%>
     <div class="text-info mx-3">
@@ -110,6 +123,5 @@ pageEncoding="UTF-8"%>
 
 </c:param>
 </c:import>
-
 
 

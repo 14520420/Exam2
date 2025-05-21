@@ -30,7 +30,7 @@
                 <tr>
                   <td>${classItem.class_num}</td>
                   <td>${classItem.c_count}</td>
-                  <td>${classItem.school.name}</td>
+                  <td>${school.name}</td>
                   <td>
                     <a href="ClassUpdate.action?class_num=${classItem.class_num}" class="btn btn-sm btn-outline-primary">変更</a>
                   </td>

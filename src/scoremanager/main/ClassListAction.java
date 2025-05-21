@@ -53,6 +53,7 @@ public class ClassListAction extends Action {
 
         // リクエスト属性に設定
         req.setAttribute("classList", classList);
+        req.setAttribute("school", school);
 
         // JSPへフォワード
         req.getRequestDispatcher("class_list.jsp").forward(req, res);
