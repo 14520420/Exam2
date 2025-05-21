@@ -22,7 +22,6 @@
 							<tr>
 								<th>科目コード</th>
 								<th>科目名</th>
-								<th>学校</th>
 								<th></th>
 								<th></th>
 							</tr>
@@ -32,7 +31,6 @@
 								<tr>
 									<td>${subject.cd}</td>
 									<td>${subject.name}</td>
-									<td>${subject.school.name}</td>
 									<td><a href="SubjectUpdate.action?cd=${subject.cd}">編集</a></td>
 									<td><a href="SubjectDelete.action?cd=${subject.cd}" class="text-danger" onclick="return confirm('本当に削除しますか？');">削除</a></td>
 								</tr>
