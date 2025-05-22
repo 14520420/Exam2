@@ -1,3 +1,4 @@
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -7,7 +8,13 @@
 
   <c:param name="content">
     <section class="me-4">
-      <h2 class="h3 mb-3 fw-normal bg-secondary bg-opacity-10 py-2 px-4">成績管理</h2>
+      <h2 class="h3 mb-3 fw-normal bg-secondary bg-opacity-10 py-2 px-4">成績登録</h2>
+
+      <c:if test="${not empty error}">
+        <div class="alert alert-danger mx-3">
+          ${error}
+        </div>
+      </c:if>
 
       <!-- 検索条件表示 -->
       <div class="mb-3">
@@ -34,7 +41,7 @@
               </tr>
             </thead>
             <tbody>
-              <c:forEach var="student" items="${studentList}">
+              <c:forEach var="student" items="${studentList}" varStatus="status">
                 <tr>
                   <td>${param.ent_year}</td>
                   <td>${param.class_num}</td>
@@ -44,6 +51,9 @@
                   <td>${student.name}</td>
                   <td>
                     <input type="number" class="form-control" name="point" min="0" max="100" required>
+                    <c:if test="${status.index == 0}">
+                      <small class="text-muted">0～100の範囲で入力してください</small>
+                    </c:if>
                   </td>
                 </tr>
               </c:forEach>
@@ -51,10 +61,15 @@
           </table>
         </div>
 
-        <div class="mb-3">
-          <button type="submit" class="btn btn-secondary">登録して終了</button>
+        <div class="col-2 text-left mb-3">
+          <button type="submit" class="btn btn-primary">登録して終了</button>
+        </div>
+
+        <div class="row px-4">
+          <a href="TestRegist.action">戻る</a>
         </div>
       </form>
     </section>
   </c:param>
-</c:import> 
+</c:import>
+```

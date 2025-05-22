@@ -20,11 +20,11 @@ public class StudentGradeDao extends Dao {
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                 "SELECT sub.name, t.point " +
+                 "SELECT sub.name, sub.cd, t.no, t.point " +
                  "FROM test t " +
                  "JOIN subject sub ON t.subject_cd = sub.cd " +
                  "WHERE t.student_no = ? " +
-                 "ORDER BY sub.cd")) {
+                 "ORDER BY sub.cd, t.no")) {
 
             stmt.setString(1, studentNo);
 
@@ -32,6 +32,8 @@ public class StudentGradeDao extends Dao {
                 while (rs.next()) {
                     StudentGrade g = new StudentGrade();
                     g.setSubjectName(rs.getString("name"));
+                    g.setSubjectCd(rs.getString("cd"));
+                    g.setTestNo(rs.getInt("no"));
                     g.setPoint(rs.getInt("point"));
                     list.add(g);
                 }
@@ -42,4 +44,4 @@ public class StudentGradeDao extends Dao {
 
         return list;
     }
-} 
+}

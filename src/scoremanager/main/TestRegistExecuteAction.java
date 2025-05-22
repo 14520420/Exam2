@@ -1,3 +1,4 @@
+
 package scoremanager.main;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import bean.Student;
 import bean.Subject;
 import bean.Teacher;
 import bean.Test;
+import dao.SubjectDao;
 import dao.TestDao;
 import tool.Action;
 
@@ -23,8 +25,8 @@ public class TestRegistExecuteAction extends Action {
             HttpSession session = request.getSession();
             Teacher teacher = (Teacher) session.getAttribute("user");
 
-            if (teacher == null) {
-                response.sendRedirect("Login.action");
+            if (teacher == null || !teacher.isAuthenticated()) {
+                response.sendRedirect("../Login.action");
                 return;
             }
 
@@ -35,7 +37,7 @@ public class TestRegistExecuteAction extends Action {
             String[] points = request.getParameterValues("point");
             String entYear = request.getParameter("ent_year");
             String classNum = request.getParameter("class_num");
-            String subjectCd = request.getParameter("subject_cd"); // 'subjectId' ではなく 'cd' を使用
+            String subjectCd = request.getParameter("subject_cd");
             String noStr = request.getParameter("no");
 
             if (studentNos == null || points == null) {
@@ -44,16 +46,21 @@ public class TestRegistExecuteAction extends Action {
 
             int no = Integer.parseInt(noStr);
 
+            // DAOのインスタンス化
+            SubjectDao subjectDao = new SubjectDao();
+            Subject subject = subjectDao.get(subjectCd, school);
+
+            if (subject == null) {
+                throw new Exception("指定された科目が見つかりません");
+            }
+
             // テスト情報のリスト作成
             List<Test> testList = new ArrayList<>();
-
-            Subject subject = new Subject();
-            subject.setCd(subjectCd);
-            subject.setSchool(school);
 
             for (int i = 0; i < studentNos.length; i++) {
                 Student student = new Student();
                 student.setNo(studentNos[i]);
+                student.setSchool(school);
 
                 Test test = new Test();
                 test.setStudent(student);
@@ -64,10 +71,14 @@ public class TestRegistExecuteAction extends Action {
 
                 try {
                     int point = Integer.parseInt(points[i]);
+                    // 点数の範囲チェック
+                    if (point < 0 || point > 100) {
+                        throw new Exception("点数は0～100の範囲で入力してください");
+                    }
                     test.setPoint(point);
                 } catch (NumberFormatException e) {
-                    // 無効な点数の場合は0点にする
-                    test.setPoint(0);
+                    // 数値変換エラー
+                    throw new Exception("点数は数値で入力してください");
                 }
 
                 testList.add(test);
@@ -78,15 +89,17 @@ public class TestRegistExecuteAction extends Action {
             boolean success = testDao.save(testList);
 
             if (success) {
-                // 登録完了画面にフォワード
+                // 登録成功
+                request.setAttribute("registrationSuccess", true);
                 request.getRequestDispatcher("test_regist_done.jsp").forward(request, response);
             } else {
+                // 登録失敗
                 throw new Exception("成績の登録に失敗しました");
             }
         } catch (Exception e) {
             // エラー情報をセット
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            request.getRequestDispatcher("TestRegist.action").forward(request, response);
         }
-    }
-} 
+
+}}

@@ -1,3 +1,4 @@
+
 package scoremanager.main;
 
 import java.time.LocalDate;
@@ -24,8 +25,8 @@ public class TestRegistAction extends Action {
             HttpSession session = request.getSession();
             Teacher teacher = (Teacher) session.getAttribute("user");
 
-            if (teacher == null) {
-                response.sendRedirect("Login.action");
+            if (teacher == null || !teacher.isAuthenticated()) {
+                response.sendRedirect("../Login.action");
                 return;
             }
 
@@ -82,9 +83,15 @@ public class TestRegistAction extends Action {
 
                 // 学生一覧取得と結果表示
                 try {
+                    // 科目名を取得
+                    Subject subject = subjectDao.get(subjectCd, school);
+                    if (subject != null) {
+                        request.setAttribute("subjectName", subject.getName());
+                    }
+
                     // 学生一覧取得処理
                     StudentDao studentDao = new StudentDao();
-                    List<Student> studentList = studentDao.filter(teacher.getSchool(),
+                    List<Student> studentList = studentDao.filter(school,
                                                                 Integer.parseInt(entYear),
                                                                 classNum,
                                                                 true);
@@ -95,6 +102,7 @@ public class TestRegistAction extends Action {
                     request.setAttribute("selectedClassNum", classNum);
                     request.setAttribute("selectedSubjectCd", subjectCd);
                     request.setAttribute("selectedNo", no);
+                    request.setAttribute("subjectName", subject != null ? subject.getName() : "");
 
                     request.getRequestDispatcher("test_regist_result.jsp").forward(request, response);
                 } catch (Exception e) {

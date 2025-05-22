@@ -46,7 +46,6 @@
 			</c:choose>
 
 			<div class="mt-3">
-				<a href="Menu.action" class="btn btn-secondary">メニューに戻る</a>
 			</div>
 		</section>
 	</c:param>

@@ -16,7 +16,6 @@ public class ClassGradeListAction extends Action {
         List<ClassGrade> grades = dao.findByClass(classNum);
 
         request.setAttribute("grades", grades);
-        request.getRequestDispatcher("scoremanager/main/class_grade_list.jsp").forward(request, response);
+        request.getRequestDispatcher("class_grade_list.jsp").forward(request, response);
     }
 }
- 
