@@ -1,8 +1,10 @@
-
 package scoremanager.main;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,93 +15,168 @@ import bean.Student;
 import bean.Subject;
 import bean.Teacher;
 import bean.Test;
+import dao.ClassNumDao;
+import dao.StudentDao;
 import dao.SubjectDao;
 import dao.TestDao;
 import tool.Action;
 
 public class TestRegistExecuteAction extends Action {
+
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        // セッションからログイン教師情報を取得
+        HttpSession session = req.getSession();
+        Teacher teacher = (Teacher) session.getAttribute("user");
+
+        // 未ログインの場合はログイン画面へリダイレクト
+        if (teacher == null || !teacher.isAuthenticated()) {
+            res.sendRedirect("../Login.action");
+            return;
+        }
+
+        // 学校情報を取得
+        School school = teacher.getSchool();
+
+        // リクエストパラメータの取得
+        String entYear = req.getParameter("ent_year");
+        String classNum = req.getParameter("class_num");
+        String subjectCd = req.getParameter("subject_cd");
+        String no = req.getParameter("no");
+        String[] studentNos = req.getParameterValues("student_no");
+        String[] points = req.getParameterValues("point");
+
         try {
-            // ログインユーザー情報取得
-            HttpSession session = request.getSession();
-            Teacher teacher = (Teacher) session.getAttribute("user");
-
-            if (teacher == null || !teacher.isAuthenticated()) {
-                response.sendRedirect("../Login.action");
-                return;
+            // 基本的なバリデーション
+            if (entYear == null || classNum == null || subjectCd == null || no == null ||
+                studentNos == null || points == null || studentNos.length != points.length) {
+                throw new Exception("必要なパラメータが不足しています");
             }
 
-            School school = teacher.getSchool();
+            int entYearInt = Integer.parseInt(entYear);
+            int noInt = Integer.parseInt(no);
 
-            // リクエストパラメータの取得
-            String[] studentNos = request.getParameterValues("student_no");
-            String[] points = request.getParameterValues("point");
-            String entYear = request.getParameter("ent_year");
-            String classNum = request.getParameter("class_num");
-            String subjectCd = request.getParameter("subject_cd");
-            String noStr = request.getParameter("no");
-
-            if (studentNos == null || points == null) {
-                throw new Exception("学生番号または点数のパラメータが不足しています");
-            }
-
-            int no = Integer.parseInt(noStr);
-
-            // DAOのインスタンス化
+            // DAO の初期化
             SubjectDao subjectDao = new SubjectDao();
-            Subject subject = subjectDao.get(subjectCd, school);
+            StudentDao studentDao = new StudentDao();
+            TestDao testDao = new TestDao();
 
+            // 科目情報を取得
+            Subject subject = subjectDao.get(subjectCd, school);
             if (subject == null) {
                 throw new Exception("指定された科目が見つかりません");
             }
 
-            // テスト情報のリスト作成
+            // バリデーション
+            Map<String, String> pointErrors = new HashMap<>();
+            boolean hasErrors = false;
+
             List<Test> testList = new ArrayList<>();
-
             for (int i = 0; i < studentNos.length; i++) {
-                Student student = new Student();
-                student.setNo(studentNos[i]);
-                student.setSchool(school);
+                String studentNo = studentNos[i];
+                String pointStr = points[i];
 
-                Test test = new Test();
-                test.setStudent(student);
-                test.setSubject(subject);
-                test.setSchool(school);
-                test.setNo(no);
-                test.setClassNum(classNum);
-
-                try {
-                    int point = Integer.parseInt(points[i]);
-                    // 点数の範囲チェック
-                    if (point < 0 || point > 100) {
-                        throw new Exception("点数は0～100の範囲で入力してください");
-                    }
-                    test.setPoint(point);
-                } catch (NumberFormatException e) {
-                    // 数値変換エラー
-                    throw new Exception("点数は数値で入力してください");
+                // 点数の検証
+                if (pointStr == null || pointStr.trim().isEmpty()) {
+                    pointErrors.put(studentNo, "点数を入力してください");
+                    hasErrors = true;
+                    continue;
                 }
 
-                testList.add(test);
+                try {
+                    int point = Integer.parseInt(pointStr.trim());
+                    if (point < 0 || point > 100) {
+                        pointErrors.put(studentNo, "0～100の範囲で入力してください");
+                        hasErrors = true;
+                        continue;
+                    }
+
+                    // 学生情報を取得
+                    Student student = studentDao.get(studentNo);
+                    if (student != null) {
+                        // テストデータを作成
+                        Test test = new Test();
+                        test.setStudent(student);
+                        test.setSubject(subject);
+                        test.setSchool(school);
+                        test.setNo(noInt);
+                        test.setPoint(point);
+                        test.setClassNum(classNum);
+                        testList.add(test);
+                    }
+                } catch (NumberFormatException e) {
+                    pointErrors.put(studentNo, "0～100の範囲で入力してください");
+                    hasErrors = true;
+                }
             }
 
-            // テスト情報を保存
-            TestDao testDao = new TestDao();
+            // エラーがある場合は元の画面に戻る
+            if (hasErrors) {
+                // 必要なデータを再取得して画面に戻る
+                ClassNumDao classNumDao = new ClassNumDao();
+
+                // 入学年度リストを作成（2015年から現在年まで）
+                int currentYear = LocalDate.now().getYear();
+                List<Integer> entYearList = new ArrayList<>();
+                for (int i = 2015; i <= currentYear; i++) {
+                    entYearList.add(i);
+                }
+
+                // クラス番号リストを取得
+                List<String> classNumList = classNumDao.filter(school);
+
+                // 科目一覧を取得
+                List<Subject> subjectList = subjectDao.filter(school);
+
+                // 回数リスト
+                List<Integer> noList = new ArrayList<>();
+                for (int i = 1; i <= 10; i++) {
+                    noList.add(i);
+                }
+
+                // 学生一覧を再取得
+                List<Student> studentList = studentDao.filter(school, entYearInt, classNum, true);
+
+                // 入力された値を保持（範囲外でも保持）
+                Map<String, String> existingPointStrings = new HashMap<>();
+                for (int i = 0; i < studentNos.length; i++) {
+                    if (points[i] != null && !points[i].trim().isEmpty()) {
+                        existingPointStrings.put(studentNos[i], points[i].trim());
+                    }
+                }
+
+                // 画面に必要なデータを設定
+                req.setAttribute("entYearList", entYearList);
+                req.setAttribute("classNumList", classNumList);
+                req.setAttribute("subjectList", subjectList);
+                req.setAttribute("noList", noList);
+                req.setAttribute("studentList", studentList);
+                req.setAttribute("existingPoints", existingPointStrings);
+                req.setAttribute("pointErrors", pointErrors);
+                req.setAttribute("selectedEntYear", entYear);
+                req.setAttribute("selectedClassNum", classNum);
+                req.setAttribute("selectedSubjectCd", subjectCd);
+                req.setAttribute("selectedNo", no);
+                req.setAttribute("selectedSubjectName", subject.getName());
+
+                req.getRequestDispatcher("test_regist.jsp").forward(req, res);
+                return;
+            }
+
+            // 成績を保存
             boolean success = testDao.save(testList);
 
             if (success) {
-                // 登録成功
-                request.setAttribute("registrationSuccess", true);
-                request.getRequestDispatcher("test_regist_done.jsp").forward(request, response);
+                // 成功した場合は完了画面へ
+                req.getRequestDispatcher("test_regist_done.jsp").forward(req, res);
             } else {
-                // 登録失敗
                 throw new Exception("成績の登録に失敗しました");
             }
+
         } catch (Exception e) {
             // エラー情報をセット
-            request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("TestRegist.action").forward(request, response);
+            req.setAttribute("error", e.getMessage());
+            req.getRequestDispatcher("TestRegist.action").forward(req, res);
         }
-
-}}
+    }
+}
